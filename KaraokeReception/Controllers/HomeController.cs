@@ -154,14 +154,7 @@ public class HomeController : Controller
         }
     }
 
-    /// <summary>
-    /// エラー画面を表示する。
-    /// </summary>
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
+
 
     /// <summary>
     /// 部屋情報と予約条件から、空室検索結果に表示する部屋情報を作成する。
@@ -199,5 +192,14 @@ public class HomeController : Controller
             EstimatedPriceNoTax = price.ToStringNoTax(),
             EstimatedPriceIncludeTax = price.ToStringIncludeTax()
         };
+    }
+
+    /// <summary>
+    /// エラー画面を表示する。
+    /// </summary>
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
