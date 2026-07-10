@@ -30,6 +30,7 @@ public class HomeController : Controller
     /// </summary>
     public IActionResult Index()
     {
+        var now = DateTime.Now;
         var viewModel = new RoomSearchViewModel
         {
             Input = new RoomSearchInputModel
@@ -37,8 +38,20 @@ public class HomeController : Controller
                 AdultCount = 2,
                 StudentCount = 0,
                 SeniorCount = 0,
-                StartTime = DateTime.Today,
-                EndTime = DateTime.Today.AddHours(2)
+                StartTime = new DateTime(
+                    now.Year,
+                    now.Month,
+                    now.Day,
+                    now.Hour,
+                    now.Minute,
+                    0),
+                EndTime = new DateTime(
+                    now.Year,
+                    now.Month,
+                    now.Day,
+                    now.Hour + 2,
+                    now.Minute,
+                    0),
             }
         };
 
@@ -109,6 +122,7 @@ public class HomeController : Controller
             var viewModel = new RoomSearchResultViewModel
             {
                 SearchCondition = input,
+                TotalUsageTime = FormatUsageTime(usageTime),
                 AvailableRooms = rooms
                     .Where(room => room.Capacity.Value >= personCount.Value)
                     .Select(room => CreateAvailableRoomViewModel(
@@ -191,6 +205,7 @@ public class HomeController : Controller
                 ReservationDisplayId = reservation.Id.ToDisplayString(),
                 RoomId = reservation.UsagePlan.Room.Id.Value,
                 RoomName = reservation.UsagePlan.Room.Name,
+                TotalUsageTime = FormatUsageTime(reservation.UsagePlan.UsageTime),
                 EstimatedPriceNoTax = price.ToStringNoTax(),
                 EstimatedPriceIncludeTax = price.ToStringIncludeTax()
             };
@@ -257,7 +272,6 @@ public class HomeController : Controller
     private async Task<ReservationConfirmViewModel> CreateReservationConfirmViewModelAsync(
         ReservationConfirmInputModel input)
     {
-        var reservationId = new ReservationId(input.ReservationId);
         var roomUsagePlan = await CreateRoomUsagePlanAsync(input);
         var availableRoom = CreateAvailableRoomViewModel(
             roomUsagePlan.Room,
@@ -269,16 +283,29 @@ public class HomeController : Controller
         return new ReservationConfirmViewModel
         {
             Input = input,
-            ReservationId = reservationId.ToDisplayString(),
             RoomId = availableRoom.RoomId,
             RoomName = availableRoom.RoomName,
             Capacity = availableRoom.Capacity,
             MachineType = availableRoom.MachineType,
             StartTime = roomUsagePlan.UsageTime.Start.ToString("yyyy/MM/dd HH:mm"),
             EndTime = roomUsagePlan.UsageTime.End.ToString("yyyy/MM/dd HH:mm"),
+            TotalUsageTime = FormatUsageTime(roomUsagePlan.UsageTime),
             EstimatedPriceNoTax = availableRoom.EstimatedPriceNoTax,
             EstimatedPriceIncludeTax = availableRoom.EstimatedPriceIncludeTax
         };
+    }
+
+    /// <summary>
+    /// 利用時間を画面表示用の文字列に変換する。
+    /// </summary>
+    /// <param name="usageTime">利用時間。</param>
+    /// <returns>利用時間の表示文字列。</returns>
+    private static string FormatUsageTime(UsageTime usageTime)
+    {
+        var hours = usageTime.TotalMinutes / 60;
+        var minutes = usageTime.TotalMinutes % 60;
+
+        return $"{hours}時間{minutes}分";
     }
 
     /// <summary>

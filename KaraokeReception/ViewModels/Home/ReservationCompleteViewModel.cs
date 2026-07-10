@@ -26,6 +26,11 @@ public class ReservationCompleteViewModel
     public required string RoomName { get; init; }
 
     /// <summary>
+    /// 表示用の利用時間合計。
+    /// </summary>
+    public required string TotalUsageTime { get; init; }
+
+    /// <summary>
     /// 見込み料金の税抜表示。
     /// </summary>
     public required string EstimatedPriceNoTax { get; init; }

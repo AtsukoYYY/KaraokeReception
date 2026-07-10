@@ -9,9 +9,6 @@
 <div class="mb-4">
     <h2 class="h5">利用内容</h2>
     <dl class="row">
-        <dt class="col-sm-3">予約ID</dt>
-        <dd class="col-sm-9">@Model.ReservationId</dd>
-
         <dt class="col-sm-3">部屋番号</dt>
         <dd class="col-sm-9">
             @Model.RoomName
@@ -37,13 +34,19 @@
         <dt class="col-sm-3">終了時間</dt>
         <dd class="col-sm-9">@Model.EndTime</dd>
 
-        <dt class="col-sm-3">見込み料金（税抜）</dt>
-        <dd class="col-sm-9">@Model.EstimatedPriceNoTax</dd>
+        <dt class="col-sm-3">利用時間合計</dt>
+        <dd class="col-sm-9">@Model.TotalUsageTime</dd>
 
         <dt class="col-sm-3">見込み料金（税込）</dt>
         <dd class="col-sm-9">@Model.EstimatedPriceIncludeTax</dd>
     </dl>
 </div>
+
+<a asp-action="SearchResults" asp-route-AdultCount="@Model.Input.AdultCount"
+   asp-route-StudentCount="@Model.Input.StudentCount" asp-route-SeniorCount="@Model.Input.SeniorCount"
+   asp-route-StartTime="@Model.Input.StartTime" asp-route-EndTime="@Model.Input.EndTime" class="btn btn-secondary">
+    部屋を選び直す
+</a>
 
 <form asp-action="Complete" method="post" class="d-inline">
     <input type="hidden" name="ReservationId" value="@Model.Input.ReservationId" />
@@ -57,13 +60,3 @@
         予約を確定する
     </button>
 </form>
-
-<a asp-action="SearchResults"
-   asp-route-AdultCount="@Model.Input.AdultCount"
-   asp-route-StudentCount="@Model.Input.StudentCount"
-   asp-route-SeniorCount="@Model.Input.SeniorCount"
-   asp-route-StartTime="@Model.Input.StartTime"
-   asp-route-EndTime="@Model.Input.EndTime"
-   class="btn btn-secondary">
-    部屋を選び直す
-</a>

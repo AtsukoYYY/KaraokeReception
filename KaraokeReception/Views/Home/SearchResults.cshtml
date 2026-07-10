@@ -19,6 +19,10 @@
         〜
         @Model.SearchCondition.EndTime.ToString("yyyy/MM/dd HH:mm")
     </p>
+    <p class="mb-0">
+        利用時間合計:
+        @Model.TotalUsageTime
+    </p>
 </div>
 
 @if (Model.AvailableRooms.Count == 0)
@@ -33,7 +37,6 @@ else
                 <th>部屋</th>
                 <th>定員</th>
                 <th>機種</th>
-                <th>見込み料金（税抜）</th>
                 <th>見込み料金（税込）</th>
                 <th></th>
             </tr>
@@ -48,7 +51,6 @@ else
                     </td>
                     <td>@room.Capacity</td>
                     <td>@room.MachineType</td>
-                    <td>@room.EstimatedPriceNoTax</td>
                     <td>@room.EstimatedPriceIncludeTax</td>
                     <td>
                         <form asp-action="Confirm" method="get">

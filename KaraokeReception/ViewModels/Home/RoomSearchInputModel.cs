@@ -44,4 +44,10 @@ public class RoomSearchInputModel
     /// 大人、学生、シニアを合計した利用人数。
     /// </summary>
     public int TotalPersonCount => AdultCount + StudentCount + SeniorCount;
+
+    /// <summary>
+    /// 利用時間合計(時間)
+    /// </summary>
+    [Display(Name = "利用時間合計")]
+    public decimal TotalUsageTime => (decimal)(EndTime - StartTime).TotalHours;
 }

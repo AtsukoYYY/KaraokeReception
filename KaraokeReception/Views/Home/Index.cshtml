@@ -50,6 +50,12 @@
                         <input asp-for="Input.EndTime" class="form-control" type="datetime-local" />
                         <span asp-validation-for="Input.EndTime" class="text-danger"></span>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-label">利用時間合計</div>
+                        <p id="totalUsageTime" class="fs-5 mb-0">
+                            -
+                        </p>
+                    </div>
                 </div>
             </section>
 
@@ -62,4 +68,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/room-search.js" asp-append-version="true"></script>
 }

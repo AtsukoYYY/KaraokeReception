@@ -11,11 +11,6 @@ public class ReservationConfirmViewModel
     public ReservationConfirmInputModel Input { get; set; } = new();
 
     /// <summary>
-    /// 表示用の予約ID。
-    /// </summary>
-    public required string ReservationId { get; init; }
-
-    /// <summary>
     /// 部屋ID。
     /// </summary>
     public required string RoomId { get; init; }
@@ -44,6 +39,11 @@ public class ReservationConfirmViewModel
     /// 表示用の終了時間。
     /// </summary>
     public required string EndTime { get; init; }
+
+    /// <summary>
+    /// 表示用の利用時間合計。
+    /// </summary>
+    public required string TotalUsageTime { get; init; }
 
     /// <summary>
     /// 見込み料金の税抜表示。

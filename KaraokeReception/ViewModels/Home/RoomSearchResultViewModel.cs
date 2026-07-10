@@ -11,6 +11,11 @@ public class RoomSearchResultViewModel
     public RoomSearchInputModel SearchCondition { get; set; } = new();
 
     /// <summary>
+    /// 表示用の利用時間合計。
+    /// </summary>
+    public string TotalUsageTime { get; set; } = string.Empty;
+
+    /// <summary>
     /// 条件に合う空室候補。
     /// </summary>
     public IReadOnlyList<AvailableRoomViewModel> AvailableRooms { get; set; } =
