@@ -13,6 +13,8 @@ namespace KaraokeReception.Controllers;
 /// </summary>
 public class HomeController : Controller
 {
+    private readonly PriceCalculator _priceCalculator;
+
     /// <summary>
     /// DB導入前に画面の流れを確認するための仮部屋データ。
     /// </summary>
@@ -40,13 +42,10 @@ public class HomeController : Controller
             new Money(22))
     ];
 
-    private static readonly PriceCalculator _priceCalculator =
-        new(
-        [
-            new NormalPriceRule(),
-            new EarlyDiscountRule()
-        ]);
-
+    public HomeController(PriceCalculator priceCalculator)
+    {
+        _priceCalculator = priceCalculator;
+    }
     /// <summary>
     /// 予約条件入力画面を表示する。
     /// </summary>
@@ -173,7 +172,7 @@ public class HomeController : Controller
     /// <param name="studentCount">学生人数。</param>
     /// <param name="seniorCount">シニア人数。</param>
     /// <returns>空室検索結果用の部屋表示モデル。</returns>
-    private static AvailableRoomViewModel CreateAvailableRoomViewModel(
+    private AvailableRoomViewModel CreateAvailableRoomViewModel(
         Room room,
         UsageTime usageTime,
         PersonCount personCount,

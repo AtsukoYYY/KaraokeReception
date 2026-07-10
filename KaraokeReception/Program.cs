@@ -1,7 +1,12 @@
+using KaraokeReception.Domain.Services.PriceCalculator;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IPriceRule, NormalPriceRule>();
+builder.Services.AddScoped<IPriceRule, EarlyDiscountRule>();
+builder.Services.AddScoped<PriceCalculator>();
 
 var app = builder.Build();
 
