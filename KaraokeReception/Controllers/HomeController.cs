@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using KaraokeReception.Domain.Entities;
-using KaraokeReception.Domain.Services;
+using KaraokeReception.Domain.Services.PriceCalculator;
 using KaraokeReception.Domain.ValueObjects;
 using KaraokeReception.Models;
 using KaraokeReception.ViewModels.Home;

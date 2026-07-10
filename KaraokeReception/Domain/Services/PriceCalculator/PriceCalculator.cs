@@ -1,7 +1,7 @@
 using KaraokeReception.Domain.Entities;
 using KaraokeReception.Domain.ValueObjects;
 
-namespace KaraokeReception.Domain.Services;
+namespace KaraokeReception.Domain.Services.PriceCalculator;
 
 /// <summary>
 /// 利用可能な料金ルールから最適な料金を計算するサービス

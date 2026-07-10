@@ -1,7 +1,7 @@
 using KaraokeReception.Domain.Entities;
 using KaraokeReception.Domain.ValueObjects;
 
-namespace KaraokeReception.Domain.Services;
+namespace KaraokeReception.Domain.Services.PriceCalculator;
 
 /// <summary>
 /// 早朝割を適用した料金を計算する料金ルール。
