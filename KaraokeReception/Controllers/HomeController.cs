@@ -2,6 +2,7 @@ using System.Diagnostics;
 using KaraokeReception.Domain.Entities;
 using KaraokeReception.Domain.Services.PriceCalculator;
 using KaraokeReception.Domain.ValueObjects;
+using KaraokeReception.Infrastructure.Repositories;
 using KaraokeReception.Models;
 using KaraokeReception.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
@@ -14,38 +15,16 @@ namespace KaraokeReception.Controllers;
 public class HomeController : Controller
 {
     private readonly PriceCalculator _priceCalculator;
+    private readonly IRoomRepository _roomRepository;
 
-    /// <summary>
-    /// DB導入前に画面の流れを確認するための仮部屋データ。
-    /// </summary>
-    private static readonly IReadOnlyList<Room> _rooms =
-    [
-        new Room(
-            new RoomId("G03001"),
-            new PersonCount(4),
-            KaraokeMachineType.Dam,
-            new Money(12)),
-        new Room(
-            new RoomId("G03005"),
-            new PersonCount(6),
-            KaraokeMachineType.Joysound,
-            new Money(14)),
-        new Room(
-            new RoomId("G04002"),
-            new PersonCount(8),
-            KaraokeMachineType.Dam,
-            new Money(18)),
-        new Room(
-            new RoomId("U01003"),
-            new PersonCount(12),
-            KaraokeMachineType.Joysound,
-            new Money(22))
-    ];
-
-    public HomeController(PriceCalculator priceCalculator)
+    public HomeController(
+        PriceCalculator priceCalculator,
+        IRoomRepository roomRepository)
     {
         _priceCalculator = priceCalculator;
+        _roomRepository = roomRepository;
     }
+
     /// <summary>
     /// 予約条件入力画面を表示する。
     /// </summary>
@@ -119,17 +98,18 @@ public class HomeController : Controller
     /// 予約条件に合う空室候補を表示する。
     /// </summary>
     /// <param name="input">空室検索条件。</param>
-    public IActionResult SearchResults(RoomSearchInputModel input)
+    public async Task<IActionResult> SearchResults(RoomSearchInputModel input)
     {
         try
         {
             var personCount = new PersonCount(input.TotalPersonCount);
             var usageTime = new UsageTime(input.StartTime, input.EndTime);
+            var rooms = await _roomRepository.GetAllAsync();
 
             var viewModel = new RoomSearchResultViewModel
             {
                 SearchCondition = input,
-                AvailableRooms = _rooms
+                AvailableRooms = rooms
                     .Where(room => room.Capacity.Value >= personCount.Value)
                     .Select(room => CreateAvailableRoomViewModel(
                         room,
