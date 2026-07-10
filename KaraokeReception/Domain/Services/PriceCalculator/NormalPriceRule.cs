@@ -18,12 +18,13 @@ public class NormalPriceRule : IPriceRule
         int normalPersonCount = usagePlan.PersonCount.Value - usagePlan.StudentCount - usagePlan.SeniorCount;
         int studentCount = usagePlan.StudentCount;
         int seniorCount = usagePlan.SeniorCount;
+        var prices = usagePlan.Room.Prices;
 
-        int normalPrice = normalPersonCount * usagePlan.Room.BasePrice.AmountNoTax * usagePlan.UsageTime.TotalMinutes;
+        int normalPrice = normalPersonCount * prices.GetPrice(PriceType.Base).AmountNoTax * usagePlan.UsageTime.TotalMinutes;
 
-        int studentPrice = studentCount * usagePlan.Room.StudentPrice.AmountNoTax * usagePlan.UsageTime.TotalMinutes;
+        int studentPrice = studentCount * prices.GetPrice(PriceType.Student).AmountNoTax * usagePlan.UsageTime.TotalMinutes;
 
-        int seniorPrice = seniorCount * usagePlan.Room.SeniorPrice.AmountNoTax * usagePlan.UsageTime.TotalMinutes;
+        int seniorPrice = seniorCount * prices.GetPrice(PriceType.Senior).AmountNoTax * usagePlan.UsageTime.TotalMinutes;
 
         return new Money(
             normalPrice + studentPrice + seniorPrice

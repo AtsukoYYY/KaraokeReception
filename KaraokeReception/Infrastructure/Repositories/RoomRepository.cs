@@ -11,8 +11,6 @@ namespace KaraokeReception.Infrastructure.Repositories;
 /// </summary>
 public class RoomRepository : IRoomRepository
 {
-    private const string BasePriceType = "BASE";
-
     private readonly KaraokeReceptionDbContext _dbContext;
 
     public RoomRepository(KaraokeReceptionDbContext dbContext)
@@ -40,37 +38,51 @@ public class RoomRepository : IRoomRepository
     /// <returns>ドメインで利用する部屋Entity。</returns>
     private static Room ToDomain(RoomDataModel room)
     {
-        var basePrice = GetRequiredBasePrice(room);
-
         return new Room(
             new RoomId(room.RoomId),
             new PersonCount(room.Capacity),
             ToKaraokeMachineType(room.Machine),
-            new Money(basePrice.PricePerMinuteNoTax));
+            ToRoomPriceTable(room));
     }
 
     /// <summary>
-    /// 部屋料金マスタから必須の基本料金を取得する。
+    /// DBの部屋料金マスタをドメインの料金表へ変換する。
     /// </summary>
-    /// <param name="room">料金を取得する部屋データ。</param>
-    /// <returns>基本料金のデータモデル。</returns>
+    /// <param name="room">料金表を作成する部屋データ。</param>
+    /// <returns>ドメインで利用する部屋料金表。</returns>
     /// <exception cref="InvalidOperationException">
-    /// 基本料金が未登録、または重複登録されている場合に発生する。
+    /// 基本料金が未登録の場合、または料金種別が重複している場合に発生する。
     /// </exception>
-    private static RoomPriceDataModel GetRequiredBasePrice(RoomDataModel room)
+    private static RoomPriceTable ToRoomPriceTable(RoomDataModel room)
     {
-        var basePrices = room.Prices
-            .Where(price => price.PriceType == BasePriceType)
+        var duplicatedPriceTypes = room.Prices
+            .GroupBy(price => price.PriceType)
+            .Where(group => group.Count() > 1)
+            .Select(group => group.Key)
             .ToList();
 
-        return basePrices.Count switch
+        if (duplicatedPriceTypes.Count > 0)
         {
-            1 => basePrices[0],
-            0 => throw new InvalidOperationException(
-                $"部屋ID {room.RoomId} の基本料金が登録されていません。"),
-            _ => throw new InvalidOperationException(
-                $"部屋ID {room.RoomId} の基本料金が重複して登録されています。")
-        };
+            throw new InvalidOperationException(
+                $"部屋ID {room.RoomId} の料金種別が重複して登録されています。"
+                + $" 対象: {string.Join(", ", duplicatedPriceTypes)}");
+        }
+
+        var hasBasePrice = room.Prices
+            .Any(price => price.PriceType == PriceType.Base.Value);
+
+        if (!hasBasePrice)
+        {
+            throw new InvalidOperationException(
+                $"部屋ID {room.RoomId} の基本料金が登録されていません。");
+        }
+
+        var prices = room.Prices
+            .ToDictionary(
+                price => new PriceType(price.PriceType),
+                price => new Money(price.PricePerMinuteNoTax));
+
+        return new RoomPriceTable(prices);
     }
 
     /// <summary>

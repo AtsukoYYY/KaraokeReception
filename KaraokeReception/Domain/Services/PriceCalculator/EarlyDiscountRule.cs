@@ -15,11 +15,13 @@ public class EarlyDiscountRule : IPriceRule
     /// <returns>早朝割を適用した場合の金額。</returns>
     public Money Calculate(RoomUsagePlan usagePlan)
     {
+        var prices = usagePlan.Room.Prices;
+
         // 早朝割引料金計算
         return new Money(
             usagePlan.PersonCount.Value *
-            (usagePlan.Room.EarlyTimePrice.AmountNoTax * usagePlan.UsageTime.EarlyMorningMinutes
-            + usagePlan.Room.BasePrice.AmountNoTax * usagePlan.UsageTime.NormalMinutes)
+            (prices.GetPrice(PriceType.Early).AmountNoTax * usagePlan.UsageTime.EarlyMorningMinutes
+            + prices.GetPrice(PriceType.Base).AmountNoTax * usagePlan.UsageTime.NormalMinutes)
         );
     }
 }

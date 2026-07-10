@@ -9,7 +9,7 @@ public class Room(
     RoomId id,
     PersonCount capacity,
     KaraokeMachineType machineType,
-    Money basePrice)
+    RoomPriceTable prices)
 {
     /// <summary>
     /// 部屋ID
@@ -27,23 +27,9 @@ public class Room(
     public KaraokeMachineType MachineType { get; } = machineType;
 
     /// <summary>
-    /// 部屋の基本料金（1人1分あたり）税抜
+    /// 部屋に設定された料金表。
     /// </summary>
-    public Money BasePrice { get; } = basePrice;
-
-    /// <summary>
-    /// 部屋の学生割引料金（1人1分あたり）税抜
-    /// </summary>
-    public Money StudentPrice => new((int)(BasePrice.AmountNoTax * 0.7));
-
-    /// <summary>
-    /// 部屋のシニア割引料金（1人1分あたり）税抜
-    /// </summary>
-    public Money SeniorPrice => new((int)(BasePrice.AmountNoTax * 0.8));
-    /// <summary>
-    /// 部屋の早朝割引料金（1人1分あたり）税抜
-    /// </summary>
-    public Money EarlyTimePrice => new((int)(BasePrice.AmountNoTax * 0.5));
+    public RoomPriceTable Prices { get; } = prices;
 
     /// <summary>
     /// 利用者向けの部屋名を取得する
