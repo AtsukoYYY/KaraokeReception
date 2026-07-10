@@ -1,8 +1,65 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model RoomSearchViewModel
+
+@{
+    ViewData["Title"] = "予約受付";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <div class="col-lg-7">
+        <h1 class="mb-4">カラオケ予約</h1>
+
+        <form asp-action="Index" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <section class="mb-4">
+                <h2 class="h5">利用人数</h2>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label asp-for="Input.AdultCount" class="form-label"></label>
+                        <input asp-for="Input.AdultCount" class="form-control" min="0" />
+                        <span asp-validation-for="Input.AdultCount" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Input.StudentCount" class="form-label"></label>
+                        <input asp-for="Input.StudentCount" class="form-control" min="0" />
+                        <span asp-validation-for="Input.StudentCount" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Input.SeniorCount" class="form-label"></label>
+                        <input asp-for="Input.SeniorCount" class="form-control" min="0" />
+                        <span asp-validation-for="Input.SeniorCount" class="text-danger"></span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-4">
+                <h2 class="h5">利用時間</h2>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Input.StartTime" class="form-label"></label>
+                        <input asp-for="Input.StartTime" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="Input.StartTime" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Input.EndTime" class="form-label"></label>
+                        <input asp-for="Input.EndTime" class="form-control" type="datetime-local" />
+                        <span asp-validation-for="Input.EndTime" class="text-danger"></span>
+                    </div>
+                </div>
+            </section>
+
+            <button type="submit" class="btn btn-primary">
+                空室を検索
+            </button>
+        </form>
+    </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
