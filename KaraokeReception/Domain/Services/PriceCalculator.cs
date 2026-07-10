@@ -10,6 +10,10 @@ public class PriceCalculator
 {
     private readonly IEnumerable<IPriceRule> _priceRules;
 
+    /// <summary>
+    /// 利用可能な料金ルールを受け取って、料金計算サービスを生成する。
+    /// </summary>
+    /// <param name="priceRules">料金候補を計算するルール一覧。</param>
     public PriceCalculator(
         IEnumerable<IPriceRule> priceRules)
     {
@@ -19,6 +23,8 @@ public class PriceCalculator
     /// <summary>
     /// 最も安い料金を計算する
     /// </summary>
+    /// <param name="reservation">料金計算対象の予約。</param>
+    /// <returns>利用可能な料金ルールの中で最も安い金額。</returns>
     public Money Calculate(Reservation reservation)
     {
         return _priceRules
