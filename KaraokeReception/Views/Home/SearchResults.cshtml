@@ -51,9 +51,17 @@ else
                     <td>@room.EstimatedPriceNoTax</td>
                     <td>@room.EstimatedPriceIncludeTax</td>
                     <td>
-                        <button type="button" class="btn btn-outline-primary btn-sm" disabled>
-                            この部屋で予約
-                        </button>
+                        <form asp-action="Confirm" method="get">
+                            <input type="hidden" name="RoomId" value="@room.RoomId" />
+                            <input type="hidden" name="AdultCount" value="@Model.SearchCondition.AdultCount" />
+                            <input type="hidden" name="StudentCount" value="@Model.SearchCondition.StudentCount" />
+                            <input type="hidden" name="SeniorCount" value="@Model.SearchCondition.SeniorCount" />
+                            <input type="hidden" name="StartTime" value="@Model.SearchCondition.StartTime.ToString("O")" />
+                            <input type="hidden" name="EndTime" value="@Model.SearchCondition.EndTime.ToString("O")" />
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                この部屋で予約
+                            </button>
+                        </form>
                     </td>
                 </tr>
             }

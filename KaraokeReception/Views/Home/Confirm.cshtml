@@ -1,0 +1,69 @@
+﻿@model ReservationConfirmViewModel
+
+@{
+    ViewData["Title"] = "予約確認";
+}
+
+<h1 class="mb-4">予約確認</h1>
+
+<div class="mb-4">
+    <h2 class="h5">利用内容</h2>
+    <dl class="row">
+        <dt class="col-sm-3">予約ID</dt>
+        <dd class="col-sm-9">@Model.ReservationId</dd>
+
+        <dt class="col-sm-3">部屋番号</dt>
+        <dd class="col-sm-9">
+            @Model.RoomName
+            <span class="text-muted small">(@Model.RoomId)</span>
+        </dd>
+
+        <dt class="col-sm-3">定員</dt>
+        <dd class="col-sm-9">@Model.Capacity</dd>
+
+        <dt class="col-sm-3">機種</dt>
+        <dd class="col-sm-9">@Model.MachineType</dd>
+
+        <dt class="col-sm-3">利用人数</dt>
+        <dd class="col-sm-9">
+            大人 @Model.Input.AdultCount 人 /
+            学生 @Model.Input.StudentCount 人 /
+            シニア @Model.Input.SeniorCount 人
+        </dd>
+
+        <dt class="col-sm-3">開始時間</dt>
+        <dd class="col-sm-9">@Model.StartTime</dd>
+
+        <dt class="col-sm-3">終了時間</dt>
+        <dd class="col-sm-9">@Model.EndTime</dd>
+
+        <dt class="col-sm-3">見込み料金（税抜）</dt>
+        <dd class="col-sm-9">@Model.EstimatedPriceNoTax</dd>
+
+        <dt class="col-sm-3">見込み料金（税込）</dt>
+        <dd class="col-sm-9">@Model.EstimatedPriceIncludeTax</dd>
+    </dl>
+</div>
+
+<form asp-action="Complete" method="post" class="d-inline">
+    <input type="hidden" name="ReservationId" value="@Model.Input.ReservationId" />
+    <input type="hidden" name="RoomId" value="@Model.Input.RoomId" />
+    <input type="hidden" name="AdultCount" value="@Model.Input.AdultCount" />
+    <input type="hidden" name="StudentCount" value="@Model.Input.StudentCount" />
+    <input type="hidden" name="SeniorCount" value="@Model.Input.SeniorCount" />
+    <input type="hidden" name="StartTime" value="@Model.Input.StartTime.ToString("O")" />
+    <input type="hidden" name="EndTime" value="@Model.Input.EndTime.ToString("O")" />
+    <button type="submit" class="btn btn-primary">
+        予約を確定する
+    </button>
+</form>
+
+<a asp-action="SearchResults"
+   asp-route-AdultCount="@Model.Input.AdultCount"
+   asp-route-StudentCount="@Model.Input.StudentCount"
+   asp-route-SeniorCount="@Model.Input.SeniorCount"
+   asp-route-StartTime="@Model.Input.StartTime"
+   asp-route-EndTime="@Model.Input.EndTime"
+   class="btn btn-secondary">
+    部屋を選び直す
+</a>

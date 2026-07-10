@@ -134,6 +134,81 @@ public class HomeController : Controller
         }
     }
 
+    /// <summary>
+    /// 選択された部屋と利用条件から予約確認画面を表示する。
+    /// </summary>
+    /// <param name="input">予約確認に必要な入力値。</param>
+    public async Task<IActionResult> Confirm(ReservationConfirmInputModel input)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(input.ReservationId))
+            {
+                input.ReservationId = ReservationId.New().Value;
+            }
+
+            var viewModel = await CreateReservationConfirmViewModelAsync(input);
+
+            return View(viewModel);
+        }
+        catch (ArgumentException ex)
+        {
+            var viewModel = new RoomSearchViewModel
+            {
+                Input = input
+            };
+
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(nameof(Index), viewModel);
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
+    /// <summary>
+    /// 予約を確定し、予約完了画面を表示する。
+    /// </summary>
+    /// <param name="input">予約確定に必要な入力値。</param>
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Complete(ReservationConfirmInputModel input)
+    {
+        try
+        {
+            var roomUsagePlan = await CreateRoomUsagePlanAsync(input);
+            var reservationId = new ReservationId(input.ReservationId);
+            var reservation = new Reservation(
+                reservationId,
+                roomUsagePlan);
+            var price = _priceCalculator.Calculate(reservation.UsagePlan);
+
+            var viewModel = new ReservationCompleteViewModel
+            {
+                ReservationId = reservation.Id.Value,
+                ReservationDisplayId = reservation.Id.ToDisplayString(),
+                RoomId = reservation.UsagePlan.Room.Id.Value,
+                RoomName = reservation.UsagePlan.Room.Name,
+                EstimatedPriceNoTax = price.ToStringNoTax(),
+                EstimatedPriceIncludeTax = price.ToStringIncludeTax()
+            };
+
+            return View(viewModel);
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return View(nameof(Confirm), await CreateReservationConfirmViewModelAsync(input));
+        }
+        catch (InvalidOperationException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+            return RedirectToAction(nameof(Index));
+        }
+    }
+
 
 
     /// <summary>
@@ -171,6 +246,68 @@ public class HomeController : Controller
             MachineType = room.MachineType.ToString(),
             EstimatedPriceNoTax = price.ToStringNoTax(),
             EstimatedPriceIncludeTax = price.ToStringIncludeTax()
+        };
+    }
+
+    /// <summary>
+    /// 予約確認画面に表示する予約内容を作成する。
+    /// </summary>
+    /// <param name="input">予約確認に必要な入力値。</param>
+    /// <returns>予約確認画面の表示モデル。</returns>
+    private async Task<ReservationConfirmViewModel> CreateReservationConfirmViewModelAsync(
+        ReservationConfirmInputModel input)
+    {
+        var reservationId = new ReservationId(input.ReservationId);
+        var roomUsagePlan = await CreateRoomUsagePlanAsync(input);
+        var availableRoom = CreateAvailableRoomViewModel(
+            roomUsagePlan.Room,
+            roomUsagePlan.UsageTime,
+            roomUsagePlan.PersonCount,
+            roomUsagePlan.StudentCount,
+            roomUsagePlan.SeniorCount);
+
+        return new ReservationConfirmViewModel
+        {
+            Input = input,
+            ReservationId = reservationId.ToDisplayString(),
+            RoomId = availableRoom.RoomId,
+            RoomName = availableRoom.RoomName,
+            Capacity = availableRoom.Capacity,
+            MachineType = availableRoom.MachineType,
+            StartTime = roomUsagePlan.UsageTime.Start.ToString("yyyy/MM/dd HH:mm"),
+            EndTime = roomUsagePlan.UsageTime.End.ToString("yyyy/MM/dd HH:mm"),
+            EstimatedPriceNoTax = availableRoom.EstimatedPriceNoTax,
+            EstimatedPriceIncludeTax = availableRoom.EstimatedPriceIncludeTax
+        };
+    }
+
+    /// <summary>
+    /// 入力値から部屋利用計画を作成する。
+    /// </summary>
+    /// <param name="input">部屋利用計画を作成するための入力値。</param>
+    /// <returns>部屋利用計画。</returns>
+    /// <exception cref="InvalidOperationException">指定された部屋が存在しない場合に発生する。</exception>
+    private async Task<RoomUsagePlan> CreateRoomUsagePlanAsync(
+        ReservationConfirmInputModel input)
+    {
+        var roomId = new RoomId(input.RoomId);
+        var personCount = new PersonCount(input.TotalPersonCount);
+        var usageTime = new UsageTime(input.StartTime, input.EndTime);
+        var rooms = await _roomRepository.GetAllAsync();
+        var room = rooms.SingleOrDefault(room => room.Id == roomId);
+
+        if (room is null)
+        {
+            throw new InvalidOperationException("指定された部屋が見つかりません。");
+        }
+
+        return new RoomUsagePlan
+        {
+            Room = room,
+            UsageTime = usageTime,
+            PersonCount = personCount,
+            StudentCount = input.StudentCount,
+            SeniorCount = input.SeniorCount
         };
     }
 

@@ -1,0 +1,35 @@
+﻿@model ReservationCompleteViewModel
+
+@{
+    ViewData["Title"] = "予約完了";
+}
+
+<h1 class="mb-4">予約完了</h1>
+
+<p>予約を受け付けました。</p>
+
+<div class="mb-4">
+    <dl class="row">
+        <dt class="col-sm-3">予約ID</dt>
+        <dd class="col-sm-9">
+            @Model.ReservationDisplayId
+            <span class="text-muted small">(@Model.ReservationId)</span>
+        </dd>
+
+        <dt class="col-sm-3">部屋</dt>
+        <dd class="col-sm-9">
+            @Model.RoomName
+            <span class="text-muted small">(@Model.RoomId)</span>
+        </dd>
+
+        <dt class="col-sm-3">見込み料金（税抜）</dt>
+        <dd class="col-sm-9">@Model.EstimatedPriceNoTax</dd>
+
+        <dt class="col-sm-3">見込み料金（税込）</dt>
+        <dd class="col-sm-9">@Model.EstimatedPriceIncludeTax</dd>
+    </dl>
+</div>
+
+<a asp-action="Index" class="btn btn-primary">
+    最初の画面へ戻る
+</a>
