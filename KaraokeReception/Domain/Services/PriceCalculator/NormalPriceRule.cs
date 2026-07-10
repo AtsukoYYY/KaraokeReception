@@ -11,19 +11,19 @@ public class NormalPriceRule : IPriceRule
     /// <summary>
     /// 大人、学生、シニアの人数区分ごとの単価を使って通常料金を計算する。
     /// </summary>
-    /// <param name="reservation">料金計算対象の予約。</param>
+    /// <param name="usagePlan">予約確定前の部屋利用計画。</param>
     /// <returns>通常料金を適用した場合の金額。</returns>
-    public Money Calculate(Reservation reservation)
+    public Money Calculate(RoomUsagePlan usagePlan)
     {
-        int normalPersonCount = reservation.PersonCount.Value - reservation.StudentCount - reservation.SeniorCount;
-        int studentCount = reservation.StudentCount;
-        int seniorCount = reservation.SeniorCount;
+        int normalPersonCount = usagePlan.PersonCount.Value - usagePlan.StudentCount - usagePlan.SeniorCount;
+        int studentCount = usagePlan.StudentCount;
+        int seniorCount = usagePlan.SeniorCount;
 
-        int normalPrice = normalPersonCount * reservation.Room.BasePrice.AmountNoTax * reservation.UsageTime.TotalMinutes;
+        int normalPrice = normalPersonCount * usagePlan.Room.BasePrice.AmountNoTax * usagePlan.UsageTime.TotalMinutes;
 
-        int studentPrice = studentCount * reservation.Room.StudentPrice.AmountNoTax * reservation.UsageTime.TotalMinutes;
+        int studentPrice = studentCount * usagePlan.Room.StudentPrice.AmountNoTax * usagePlan.UsageTime.TotalMinutes;
 
-        int seniorPrice = seniorCount * reservation.Room.SeniorPrice.AmountNoTax * reservation.UsageTime.TotalMinutes;
+        int seniorPrice = seniorCount * usagePlan.Room.SeniorPrice.AmountNoTax * usagePlan.UsageTime.TotalMinutes;
 
         return new Money(
             normalPrice + studentPrice + seniorPrice

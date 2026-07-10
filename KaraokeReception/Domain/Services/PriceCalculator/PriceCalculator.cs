@@ -23,12 +23,12 @@ public class PriceCalculator
     /// <summary>
     /// 最も安い料金を計算する
     /// </summary>
-    /// <param name="reservation">料金計算対象の予約。</param>
+    /// <param name="usagePlan">予約確定前の部屋利用計画。</param>
     /// <returns>利用可能な料金ルールの中で最も安い金額。</returns>
-    public Money Calculate(Reservation reservation)
+    public Money Calculate(RoomUsagePlan usagePlan)
     {
         return _priceRules
-            .Select(rule => rule.Calculate(reservation))
+            .Select(rule => rule.Calculate(usagePlan))
             .MinBy(price => price.AmountNoTax);
     }
 }

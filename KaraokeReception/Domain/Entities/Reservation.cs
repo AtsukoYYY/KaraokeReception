@@ -13,44 +13,20 @@ public class Reservation
     public ReservationId Id { get; }
 
     /// <summary>
-    /// 利用する部屋
+    /// 予約された部屋利用計画。
     /// </summary>
-    public Room Room { get; }
+    public RoomUsagePlan UsagePlan { get; }
 
     /// <summary>
-    /// 利用時間
+    /// 予約IDと部屋利用計画から予約を生成する。
     /// </summary>
-    public UsageTime UsageTime { get; }
-
-    /// <summary>
-    /// 利用人数
-    /// </summary>
-    public PersonCount PersonCount { get; }
-
-    /// <summary>
-    /// 学生人数
-    /// </summary>
-    public int StudentCount { get; }
-
-    /// <summary>
-    /// シニア人数
-    /// </summary>
-    public int SeniorCount { get; }
-
-
+    /// <param name="id">予約ID。</param>
+    /// <param name="usagePlan">予約された部屋利用計画。</param>
     public Reservation(
         ReservationId id,
-        Room room,
-        UsageTime usageTime,
-        PersonCount personCount,
-        int studentCount,
-        int seniorCount)
+        RoomUsagePlan usagePlan)
     {
         Id = id;
-        Room = room;
-        UsageTime = usageTime;
-        PersonCount = personCount;
-        StudentCount = studentCount;
-        SeniorCount = seniorCount;
+        UsagePlan = usagePlan;
     }
 }

@@ -180,15 +180,16 @@ public class HomeController : Controller
         int studentCount,
         int seniorCount)
     {
-        var reservation = new Reservation(
-            new ReservationId(Guid.NewGuid().ToString()),
-            room,
-            usageTime,
-            personCount,
-            studentCount,
-            seniorCount);
+        var roomUsagePlan = new RoomUsagePlan
+        {
+            Room = room,
+            UsageTime = usageTime,
+            PersonCount = personCount,
+            StudentCount = studentCount,
+            SeniorCount = seniorCount
+        };
 
-        var price = _priceCalculator.Calculate(reservation);
+        var price = _priceCalculator.Calculate(roomUsagePlan);
 
         return new AvailableRoomViewModel
         {
